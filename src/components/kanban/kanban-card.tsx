@@ -4,7 +4,6 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Prospect, ESTADO_CONFIG } from "@/lib/types";
 import { PriorityBadge } from "@/components/shared/priority-badge";
-import { PreferenceBadge } from "@/components/shared/preference-badge"; // We don't have this, avoid importing
 import { GripVertical, Globe, User, Clock, Bot, Loader2, MessageCircle, Phone, Send } from "lucide-react";
 import { useState } from "react";
 
