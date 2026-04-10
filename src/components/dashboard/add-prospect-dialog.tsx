@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { ESTADOS, EstadoProspecto, Prospect } from "@/lib/types";
 import { useState } from "react";
-import { Building2, User, Globe, Star, StickyNote } from "lucide-react";
+import { Building2, User, Globe, Star, StickyNote, Phone, MessageCircle } from "lucide-react";
 
 interface AddProspectDialogProps {
   open: boolean;
@@ -35,6 +35,8 @@ export function AddProspectDialog({
   const [formData, setFormData] = useState({
     nombre: "",
     contacto: "",
+    telefono: "",
+    metodo_contacto: "WhatsApp" as "WhatsApp" | "Email",
     url: "",
     estado: "Prospecto" as EstadoProspecto,
     notas_ia: "",
@@ -48,9 +50,13 @@ export function AddProspectDialog({
     onAdd({
       nombre: formData.nombre.trim(),
       contacto: formData.contacto.trim() || null,
+      telefono: formData.telefono.trim() || null,
+      metodo_contacto: formData.metodo_contacto,
       url: formData.url.trim() || null,
       estado: formData.estado,
       notas_ia: formData.notas_ia.trim() || null,
+      draft_asunto: null,
+      draft_mensaje: null,
       prioridad: formData.prioridad,
     });
 
@@ -58,6 +64,8 @@ export function AddProspectDialog({
     setFormData({
       nombre: "",
       contacto: "",
+      telefono: "",
+      metodo_contacto: "WhatsApp",
       url: "",
       estado: "Prospecto",
       notas_ia: "",
@@ -99,20 +107,62 @@ export function AddProspectDialog({
             />
           </div>
 
-          {/* Contacto */}
+          {/* Contacto & Teléfono en Row */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-sm font-medium text-foreground/80">
+                <User className="h-3.5 w-3.5" />
+                Persona de Contacto
+              </label>
+              <Input
+                placeholder="Ej: Juan Pérez"
+                value={formData.contacto}
+                onChange={(e) =>
+                  setFormData({ ...formData, contacto: e.target.value })
+                }
+                className="bg-muted/50 border-border/60"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-sm font-medium text-foreground/80">
+                <Phone className="h-3.5 w-3.5" />
+                Celular / Teléfono
+              </label>
+              <Input
+                placeholder="Ej: 549112345678"
+                value={formData.telefono}
+                onChange={(e) =>
+                  setFormData({ ...formData, telefono: e.target.value })
+                }
+                type="tel"
+                className="bg-muted/50 border-border/60"
+              />
+            </div>
+          </div>
+
+          {/* Método de Contacto */}
           <div className="space-y-1.5">
             <label className="flex items-center gap-1.5 text-sm font-medium text-foreground/80">
-              <User className="h-3.5 w-3.5" />
-              Persona de Contacto
+              <MessageCircle className="h-3.5 w-3.5" />
+              Preferencia de Contacto
             </label>
-            <Input
-              placeholder="Ej: Juan Pérez"
-              value={formData.contacto}
-              onChange={(e) =>
-                setFormData({ ...formData, contacto: e.target.value })
+            <Select
+              value={formData.metodo_contacto}
+              onValueChange={(v) =>
+                setFormData({
+                  ...formData,
+                  metodo_contacto: v as "WhatsApp" | "Email",
+                })
               }
-              className="bg-muted/50 border-border/60"
-            />
+            >
+              <SelectTrigger className="bg-muted/50 border-border/60">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="glass-card border-border/50">
+                <SelectItem value="WhatsApp">WhatsApp</SelectItem>
+                <SelectItem value="Email">Email</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* URL */}

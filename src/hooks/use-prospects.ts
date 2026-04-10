@@ -78,12 +78,12 @@ export function useProspects() {
 
   // Update prospect AI notes
   const updateProspectNotas = useCallback(
-    async (prospectId: string, nuevasNotas: string) => {
+    async (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => {
       // Optimistic update
       setProspects((prev) =>
         prev.map((p) =>
           p.id === prospectId
-            ? { ...p, notas_ia: nuevasNotas, updated_at: new Date().toISOString() }
+            ? { ...p, notas_ia: nuevasNotas, draft_asunto: draftAsunto, draft_mensaje: draftMensaje, updated_at: new Date().toISOString() }
             : p
         )
       );
@@ -91,7 +91,12 @@ export function useProspects() {
       // Backend update
       await supabase
         .from('leads')
-        .update({ notas_ia: nuevasNotas, updated_at: new Date().toISOString() })
+        .update({ 
+          notas_ia: nuevasNotas, 
+          draft_asunto: draftAsunto,
+          draft_mensaje: draftMensaje,
+          updated_at: new Date().toISOString() 
+        })
         .eq('id', prospectId);
     },
     []

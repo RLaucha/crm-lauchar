@@ -12,7 +12,7 @@ interface KanbanColumnProps {
   estado: EstadoProspecto;
   prospects: Prospect[];
   isCollapsed?: boolean;
-  onUpdateNotas: (prospectId: string, nuevasNotas: string) => void;
+  onUpdateNotas: (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => void;
 }
 
 export function KanbanColumn({

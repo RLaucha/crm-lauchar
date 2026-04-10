@@ -20,7 +20,7 @@ interface KanbanBoardProps {
   prospectsByEstado: Record<EstadoProspecto, Prospect[]>;
   allProspects: Prospect[];
   onUpdateEstado: (prospectId: string, newEstado: EstadoProspecto) => void;
-  onUpdateNotas: (prospectId: string, nuevasNotas: string) => void;
+  onUpdateNotas: (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => void;
 }
 
 export function KanbanBoard({

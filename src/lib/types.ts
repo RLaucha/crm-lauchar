@@ -20,9 +20,13 @@ export interface Prospect {
   updated_at: string;
   nombre: string;
   contacto: string | null;
+  telefono: string | null;
+  metodo_contacto: 'WhatsApp' | 'Email';
   url: string | null;
   estado: EstadoProspecto;
   notas_ia: string | null;
+  draft_asunto: string | null;
+  draft_mensaje: string | null;
   prioridad: number; // 1-5
 }
 

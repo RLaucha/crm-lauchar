@@ -4,12 +4,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Prospect, ESTADO_CONFIG } from "@/lib/types";
 import { PriorityBadge } from "@/components/shared/priority-badge";
-import { GripVertical, Globe, User, Clock, Bot, Loader2 } from "lucide-react";
+import { PreferenceBadge } from "@/components/shared/preference-badge"; // We don't have this, avoid importing
+import { GripVertical, Globe, User, Clock, Bot, Loader2, MessageCircle, Phone, Send } from "lucide-react";
 import { useState } from "react";
 
 interface KanbanCardProps {
   prospect: Prospect;
-  onUpdateNotas?: (prospectId: string, nuevasNotas: string) => void;
+  onUpdateNotas?: (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => void;
 }
 
 export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
@@ -52,11 +53,14 @@ export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: prospect.url })
+        body: JSON.stringify({ 
+          url: prospect.url,
+          metodo_contacto: prospect.metodo_contacto || "WhatsApp"
+        })
       });
       const data = await res.json();
       if (data.diagnostic) {
-        onUpdateNotas(prospect.id, data.diagnostic);
+        onUpdateNotas(prospect.id, data.diagnostic, data.draft_asunto, data.draft_mensaje);
       }
     } catch (error) {
       console.error("Error analyzing:", error);
@@ -121,20 +125,44 @@ export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
         </p>
       )}
 
-      {/* Action Button */}
+      {/* Action Buttons */}
       {prospect.url && onUpdateNotas && (
-        <button
-          onClick={handleAnalyze}
-          disabled={isAnalyzing}
-          className="mb-2 flex w-full items-center justify-center gap-1.5 rounded-md bg-indigo-500/10 py-1.5 text-xs font-medium text-indigo-400 opacity-80 transition-all hover:bg-indigo-500/20 hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isAnalyzing ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <Bot className="h-3.5 w-3.5" />
+        <div className="mb-2 flex flex-col gap-1.5">
+          <button
+            onClick={handleAnalyze}
+            disabled={isAnalyzing}
+            className={`flex w-full items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium opacity-80 transition-all hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed ${
+              prospect.draft_mensaje ? "bg-muted/50 text-muted-foreground hover:bg-muted/80" : "bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20"
+            }`}
+          >
+            {isAnalyzing ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Bot className="h-3.5 w-3.5" />
+            )}
+            {isAnalyzing ? "Analizando sitio..." : prospect.notas_ia ? "Re-evaluar con IA" : "Generar Auditoría IA"}
+          </button>
+
+          {/* Contact Button */}
+          {prospect.draft_mensaje && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (prospect.metodo_contacto === 'WhatsApp') {
+                  const num = prospect.telefono || '';
+                  window.open(`https://wa.me/${num.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(prospect.draft_mensaje!)}`, '_blank');
+                } else {
+                  const mail = prospect.contacto || '';
+                  window.open(`mailto:${mail}?subject=${encodeURIComponent(prospect.draft_asunto || '')}&body=${encodeURIComponent(prospect.draft_mensaje!)}`, '_blank');
+                }
+              }}
+              className="flex w-full items-center justify-center gap-1.5 rounded-md bg-emerald-500/15 py-1.5 text-xs font-medium text-emerald-500 transition-all hover:bg-emerald-500/25"
+            >
+              <Send className="h-3.5 w-3.5" />
+              Enviar {prospect.metodo_contacto}
+            </button>
           )}
-          {isAnalyzing ? "Analizando sitio..." : prospect.notas_ia ? "Re-evaluar con IA" : "Generar Auditoría IA"}
-        </button>
+        </div>
       )}
 
       {/* Footer: date */}
