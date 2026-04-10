@@ -114,24 +114,15 @@ export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
         </div>
       )}
 
-      {/* Notes preview or Action Button */}
-      {prospect.notas_ia ? (
-        <div className="mb-2 group/notes relative">
-          <p className="text-xs text-muted-foreground/70 line-clamp-2 leading-relaxed">
-            {prospect.notas_ia}
-          </p>
-          {prospect.url && onUpdateNotas && (
-            <button
-              onClick={handleAnalyze}
-              disabled={isAnalyzing}
-              className="absolute -top-1 right-0 opacity-0 group-hover/notes:opacity-100 transition-opacity bg-background/90 p-1 rounded-md border border-border/50 text-indigo-400 hover:text-indigo-300 shadow-sm"
-              title="Re-generar Auditoría IA"
-            >
-              {isAnalyzing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Bot className="h-3 w-3" />}
-            </button>
-          )}
-        </div>
-      ) : prospect.url && onUpdateNotas ? (
+      {/* Notes preview */}
+      {prospect.notas_ia && (
+        <p className="mb-2 text-xs text-muted-foreground/70 line-clamp-3 leading-relaxed">
+          {prospect.notas_ia}
+        </p>
+      )}
+
+      {/* Action Button */}
+      {prospect.url && onUpdateNotas && (
         <button
           onClick={handleAnalyze}
           disabled={isAnalyzing}
@@ -142,9 +133,9 @@ export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
           ) : (
             <Bot className="h-3.5 w-3.5" />
           )}
-          {isAnalyzing ? "Analizando sitio..." : "Generar Auditoría IA"}
+          {isAnalyzing ? "Analizando sitio..." : prospect.notas_ia ? "Re-evaluar con IA" : "Generar Auditoría IA"}
         </button>
-      ) : null}
+      )}
 
       {/* Footer: date */}
       <div className="flex items-center justify-between pt-1 border-t border-border/30">
