@@ -83,7 +83,7 @@ export function AddProspectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card border-border/50 sm:max-w-[500px]">
+      <DialogContent className="glass-card border-border/50 sm:max-w-[500px] max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
