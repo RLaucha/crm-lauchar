@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -17,9 +16,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import { ESTADOS, EstadoProspecto, Prospect, Tarea } from "@/lib/types";
 import { useState, useEffect } from "react";
-import { Building2, User, Globe, Star, StickyNote, Phone, MessageCircle, Mail, CheckSquare, Plus, Trash2, ListTodo } from "lucide-react";
+import { Building2, User, Globe, Phone, MessageCircle, Mail, CheckSquare, Plus, Trash2, ListTodo, Bot, Send } from "lucide-react";
 
 interface ProspectDetailDialogProps {
   prospect: Prospect | null;
@@ -83,187 +83,229 @@ export function ProspectDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-card border-border/50 max-w-4xl max-h-[90vh] p-0 flex flex-col overflow-hidden">
-        <DialogHeader className="p-6 pb-4 border-b border-border/40 shrink-0">
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
-              <Building2 className="h-5 w-5 text-white" />
+      {/* Añadimos sm:max-w-[900px] w-[95vw] para sobreescribir el bloqueo default de shadcn */}
+      <DialogContent className="glass-card border-border/50 sm:max-w-[900px] w-[95vw] max-h-[90vh] p-0 flex flex-col overflow-hidden">
+        <DialogHeader className="p-6 pb-4 border-b border-border/40 shrink-0 bg-background/50">
+          <DialogTitle className="flex items-center gap-3 text-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg">
+              <Building2 className="h-6 w-6 text-white" />
             </div>
             <div>
               {prospect.nombre}
-              <div className="text-xs font-normal text-muted-foreground mt-0.5">
-                Editando prospecto y gestionando tareas automáticas
+              <div className="text-sm font-normal text-muted-foreground mt-0.5 flex flex-wrap gap-2 items-center">
+                Editando prospecto y auditando con IA
               </div>
             </div>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-2">
-          {/* Panel Izquierdo: Edición de Datos */}
-          <ScrollArea className="h-full border-r border-border/40 p-6">
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-foreground/90 uppercase tracking-wider mb-2">Información del Negocio</h3>
+        <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5">
+          
+          {/* Panel Izquierdo: Edición de Datos Y Gemini (3 columnas) */}
+          <ScrollArea className="h-full md:col-span-3 border-r border-border/40 p-6">
+            <div className="space-y-6">
               
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Nombre</label>
-                  <Input
-                    value={formData.nombre || ""}
-                    onChange={(e) => handleChange("nombre", e.target.value)}
-                    className="h-8 text-sm bg-muted/30"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Dueño/Socio</label>
-                  <Input
-                    value={formData.nombre_dueno || ""}
-                    onChange={(e) => handleChange("nombre_dueno", e.target.value)}
-                    className="h-8 text-sm bg-muted/30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">URL</label>
-                  <Input
-                    value={formData.url || ""}
-                    onChange={(e) => handleChange("url", e.target.value)}
-                    className="h-8 text-sm bg-muted/30"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Oportunidad</label>
-                  <Select
-                    value={formData.estado}
-                    onValueChange={(v) => handleChange("estado", v)}
-                  >
-                    <SelectTrigger className="h-8 text-sm bg-muted/30">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="glass-card">
-                      {ESTADOS.map((e) => (
-                        <SelectItem key={e} value={e}>{e}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="w-full border-t border-border/40 my-4" />
-
-              <h3 className="text-sm font-semibold text-foreground/90 uppercase tracking-wider mb-2">Contacto</h3>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1"><User className="h-3 w-3"/> Referente</label>
-                  <Input
-                    value={formData.contacto || ""}
-                    onChange={(e) => handleChange("contacto", e.target.value)}
-                    className="h-8 text-sm bg-muted/30"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3"/> Teléfono</label>
-                  <Input
-                    value={formData.telefono || ""}
-                    onChange={(e) => handleChange("telefono", e.target.value)}
-                    className="h-8 text-sm bg-muted/30"
-                  />
+              {/* Bloque Formularios */}
+              <div>
+                <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wider mb-4">Información Principal</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Nombre / Empresa</label>
+                    <Input
+                      value={formData.nombre || ""}
+                      onChange={(e) => handleChange("nombre", e.target.value)}
+                      className="bg-muted/30 border-border/60 focus-visible:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Dueño / Socio</label>
+                    <Input
+                      value={formData.nombre_dueno || ""}
+                      onChange={(e) => handleChange("nombre_dueno", e.target.value)}
+                      className="bg-muted/30 border-border/60 focus-visible:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5"><Globe className="h-3.5 w-3.5"/> Sitio Web</label>
+                    <Input
+                      value={formData.url || ""}
+                      onChange={(e) => handleChange("url", e.target.value)}
+                      className="bg-muted/30 border-border/60 focus-visible:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground">Etapa Comercial</label>
+                    <Select
+                      value={formData.estado}
+                      onValueChange={(v) => handleChange("estado", v)}
+                    >
+                      <SelectTrigger className="bg-muted/30 border-border/60">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="glass-card">
+                        {ESTADOS.map((e) => (
+                          <SelectItem key={e} value={e}>{e}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5"><Phone className="h-3.5 w-3.5"/> Teléfono</label>
+                    <Input
+                      value={formData.telefono || ""}
+                      onChange={(e) => handleChange("telefono", e.target.value)}
+                      className="bg-muted/30 border-border/60 focus-visible:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5"><Mail className="h-3.5 w-3.5"/> Email</label>
+                    <Input
+                      value={formData.email || ""}
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      className="bg-muted/30 border-border/60 focus-visible:ring-indigo-500"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1"><Mail className="h-3 w-3"/> Email</label>
-                  <Input
-                    value={formData.email || ""}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    className="h-8 text-sm bg-muted/30"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1"><MessageCircle className="h-3 w-3"/> Preferencia</label>
-                  <Select
-                    value={formData.metodo_contacto}
-                    onValueChange={(v) => handleChange("metodo_contacto", v)}
-                  >
-                    <SelectTrigger className="h-8 text-sm bg-muted/30">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="glass-card">
-                      <SelectItem value="WhatsApp">WhatsApp</SelectItem>
-                      <SelectItem value="Email">Email</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="w-full border-t border-border/40" />
+
+              {/* Bloque Inteligencia Artificial */}
+              <div>
+                <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-indigo-400" />
+                  Estrategia Generada por Gemini
+                </h3>
+
+                {!formData.notas_ia ? (
+                  <div className="text-center p-8 border border-dashed border-border/50 rounded-lg text-muted-foreground bg-muted/10">
+                    Todavía no auditaste este cliente con la IA. Cerrá esta ventana y tocá "Generar Auditoría IA" en su tarjeta.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-lg p-4">
+                      <label className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2 block">Diagnóstico Interno</label>
+                      <p className="text-sm text-foreground/90 leading-relaxed font-medium">
+                        {formData.notas_ia}
+                      </p>
+                    </div>
+
+                    <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-emerald-500 uppercase tracking-wider block">Mensaje de Venta Listo</label>
+                        <span className="text-[10px] uppercase px-2 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-400">
+                          {formData.metodo_contacto}
+                        </span>
+                      </div>
+                      
+                      {formData.draft_asunto && (
+                        <div>
+                          <label className="text-[10px] text-muted-foreground font-semibold uppercase">Asunto / Gancho:</label>
+                          <Input 
+                            value={formData.draft_asunto} 
+                            onChange={(e) => handleChange("draft_asunto", e.target.value)}
+                            className="h-8 text-sm font-medium mt-1 border-emerald-500/30 bg-background/50 focus-visible:ring-emerald-500"
+                          />
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="text-[10px] text-muted-foreground font-semibold uppercase">Cuerpo del Mensaje:</label>
+                        <Textarea 
+                          value={formData.draft_mensaje || ""} 
+                          onChange={(e) => handleChange("draft_mensaje", e.target.value)}
+                          className="text-sm min-h-[160px] mt-1 border-emerald-500/30 bg-background/50 focus-visible:ring-emerald-500"
+                        />
+                      </div>
+                      
+                      {/* Enviar en directo  */}
+                      <Button 
+                        onClick={() => {
+                          if (formData.metodo_contacto === 'WhatsApp') {
+                            const num = formData.telefono || '';
+                            window.open(`https://wa.me/${num.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(formData.draft_mensaje!)}`, '_blank');
+                          } else {
+                            const emailStr = formData.email || '';
+                            window.open(`mailto:${emailStr}?subject=${encodeURIComponent(formData.draft_asunto || '')}&body=${encodeURIComponent(formData.draft_mensaje!)}`, '_blank');
+                          }
+                        }}
+                        className="w-full bg-emerald-500 text-white hover:bg-emerald-600 gap-2 mt-2"
+                      >
+                        <Send className="h-4 w-4" />
+                        Disparar Mensaje
+                      </Button>
+
+                    </div>
+                  </div>
+                )}
               </div>
 
             </div>
           </ScrollArea>
 
-          {/* Panel Derecho: Lista de Tareas Contextuales */}
-          <div className="flex flex-col h-full bg-muted/10">
-            <div className="p-6 pb-2 shrink-0 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-foreground/90 uppercase tracking-wider flex items-center gap-2">
-                <ListTodo className="h-4 w-4 text-indigo-400" />
-                Plan de Acción
-              </h3>
-              <span className={`text-[10px] uppercase px-2 py-0.5 rounded-full font-bold ${isDevelopmentPhase ? 'bg-blue-500/20 text-blue-400' : 'bg-orange-500/20 text-orange-400'}`}>
-                {isDevelopmentPhase ? 'Fase Técnica' : 'Fase Prospección'}
-              </span>
-            </div>
-
-            <div className="px-6 py-2 shrink-0 flex gap-2">
-              <Input
-                placeholder={defaultSuggestion}
-                value={newTaskText}
-                onChange={(e) => setNewTaskText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTask();
-                  }
-                }}
-                className="bg-background/50 border-border/60 text-sm"
-              />
-              <Button onClick={handleAddTask} size="icon" className="shrink-0 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30">
-                <Plus className="h-4 w-4" />
-              </Button>
+          {/* Panel Derecho: Lista de Tareas Contextuales (2 columnas) */}
+          <div className="flex flex-col h-[50vh] md:h-full bg-muted/10 md:col-span-2 border-t md:border-t-0 md:border-l border-border/40">
+            <div className="p-6 pb-4 shrink-0 bg-background/40">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center gap-2">
+                  <ListTodo className="h-4 w-4 text-indigo-400" />
+                  Plan de Acción
+                </h3>
+                <span className={`text-[10px] uppercase px-2 py-0.5 rounded-full font-bold shadow-sm ${isDevelopmentPhase ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-orange-500/20 text-orange-400 border border-orange-500/30'}`}>
+                  {isDevelopmentPhase ? 'En Desarrollo' : 'Prospección'}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  placeholder={defaultSuggestion}
+                  value={newTaskText}
+                  onChange={(e) => setNewTaskText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTask();
+                    }
+                  }}
+                  className="bg-background/80 border-border/60 text-sm focus-visible:ring-indigo-500"
+                />
+                <Button onClick={handleAddTask} size="icon" className="shrink-0 bg-indigo-500 hover:bg-indigo-600 text-white shadow-md transition-transform active:scale-95">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             <ScrollArea className="flex-1 p-6 pt-2">
-              <div className="space-y-2">
+              <div className="space-y-2.5 pb-8">
                 {(!formData.tareas || formData.tareas.length === 0) ? (
-                  <div className="text-center p-6 border border-dashed border-border/50 rounded-lg text-muted-foreground text-sm">
-                    No hay tareas registradas aún.
+                  <div className="text-center p-8 border border-dashed border-border/50 rounded-xl text-muted-foreground text-sm bg-background/30">
+                    Vacío por ahora. Ingresá el primer paso arriba.
                   </div>
                 ) : (
                   formData.tareas.map((tarea) => (
                     <div
                       key={tarea.id}
-                      className={`group flex items-center justify-between gap-3 p-2.5 rounded-md border transition-all ${
+                      className={`group flex items-start gap-3 p-3 rounded-lg border shadow-sm transition-all duration-200 ${
                         tarea.completed
-                          ? "bg-muted/30 border-border/30 opacity-60"
-                          : "bg-card/50 border-border/60 hover:bg-card hover:border-indigo-500/30"
+                          ? "bg-muted/40 border-border/30 opacity-60"
+                          : "bg-card/80 border-border/60 hover:bg-card hover:border-indigo-500/40 hover:shadow-md hover:-translate-y-0.5"
                       }`}
                     >
                       <button
                         onClick={() => toggleTask(tarea.id)}
-                        className={`shrink-0 flex items-center justify-center h-5 w-5 rounded border ${
+                        className={`mt-0.5 shrink-0 flex items-center justify-center h-5 w-5 rounded border transition-colors ${
                           tarea.completed
                             ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-500"
-                            : "border-muted-foreground/30 hover:border-indigo-400/50"
+                            : "bg-background border-muted-foreground/40 hover:border-indigo-400"
                         }`}
                       >
-                        {tarea.completed && <CheckSquare className="h-3 w-3" />}
+                        {tarea.completed && <CheckSquare className="h-3.5 w-3.5" />}
                       </button>
-                      <span className={`flex-1 text-sm ${tarea.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                      <span className={`flex-1 text-sm leading-relaxed pt-0.5 ${tarea.completed ? "line-through text-muted-foreground" : "text-foreground font-medium"}`}>
                         {tarea.text}
                       </span>
                       <button
                         onClick={() => removeTask(tarea.id)}
-                        className="opacity-0 group-hover:opacity-100 p-1.5 text-muted-foreground hover:text-red-400 hover:bg-red-400/10 rounded transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded transition-all mt-0.5"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -273,6 +315,7 @@ export function ProspectDetailDialog({
               </div>
             </ScrollArea>
           </div>
+
         </div>
       </DialogContent>
     </Dialog>
