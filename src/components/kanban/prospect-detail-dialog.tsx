@@ -99,10 +99,10 @@ export function ProspectDetailDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5">
+        <div className="flex-1 min-h-0 overflow-hidden grid grid-cols-1 md:grid-cols-5">
           
           {/* Panel Izquierdo: Edición de Datos Y Gemini (3 columnas) */}
-          <ScrollArea className="h-full md:col-span-3 border-r border-border/40 p-6">
+          <div className="h-full overflow-y-auto md:col-span-3 border-r border-border/40 p-6">
             <div className="space-y-6">
               
               {/* Bloque Formularios */}
@@ -241,10 +241,10 @@ export function ProspectDetailDialog({
               </div>
 
             </div>
-          </ScrollArea>
+          </div>
 
           {/* Panel Derecho: Lista de Tareas Contextuales (2 columnas) */}
-          <div className="flex flex-col h-[50vh] md:h-full bg-muted/10 md:col-span-2 border-t md:border-t-0 md:border-l border-border/40">
+          <div className="flex flex-col min-h-0 h-[50vh] md:h-full bg-muted/10 md:col-span-2 border-t md:border-t-0 md:border-l border-border/40">
             <div className="p-6 pb-4 shrink-0 bg-background/40">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center gap-2">
@@ -274,7 +274,7 @@ export function ProspectDetailDialog({
               </div>
             </div>
 
-            <ScrollArea className="flex-1 p-6 pt-2">
+            <div className="flex-1 overflow-y-auto p-6 pt-2 custom-scrollbar">
               <div className="space-y-2.5 pb-8">
                 {(!formData.tareas || formData.tareas.length === 0) ? (
                   <div className="text-center p-8 border border-dashed border-border/50 rounded-xl text-muted-foreground text-sm bg-background/30">
@@ -313,7 +313,7 @@ export function ProspectDetailDialog({
                   ))
                 )}
               </div>
-            </ScrollArea>
+            </div>
           </div>
 
         </div>
