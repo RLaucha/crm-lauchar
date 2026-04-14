@@ -21,6 +21,7 @@ interface KanbanBoardProps {
   allProspects: Prospect[];
   onUpdateEstado: (prospectId: string, newEstado: EstadoProspecto) => void;
   onUpdateNotas: (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => void;
+  onCardClick: (prospect: Prospect) => void;
 }
 
 export function KanbanBoard({
@@ -28,6 +29,7 @@ export function KanbanBoard({
   allProspects,
   onUpdateEstado,
   onUpdateNotas,
+  onCardClick,
 }: KanbanBoardProps) {
   const [activeProspect, setActiveProspect] = useState<Prospect | null>(null);
 
@@ -100,6 +102,7 @@ export function KanbanBoard({
               estado={estado}
               prospects={prospectsByEstado[estado] || []}
               onUpdateNotas={onUpdateNotas}
+              onCardClick={onCardClick}
             />
           ))}
 
@@ -109,6 +112,7 @@ export function KanbanBoard({
             prospects={prospectsByEstado["Archivado"] || []}
             isCollapsed={archivedCount === 0}
             onUpdateNotas={onUpdateNotas}
+            onCardClick={onCardClick}
           />
 
           {/* Drag overlay */}

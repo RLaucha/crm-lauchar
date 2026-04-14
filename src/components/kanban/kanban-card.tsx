@@ -10,9 +10,10 @@ import { useState } from "react";
 interface KanbanCardProps {
   prospect: Prospect;
   onUpdateNotas?: (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => void;
+  onCardClick?: (prospect: Prospect) => void;
 }
 
-export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
+export function KanbanCard({ prospect, onUpdateNotas, onCardClick }: KanbanCardProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const {
     attributes,
@@ -70,9 +71,10 @@ export function KanbanCard({ prospect, onUpdateNotas }: KanbanCardProps) {
 
   return (
     <div
+      onClick={() => onCardClick?.(prospect)}
       ref={setNodeRef}
       style={style}
-      className={`kanban-card-transition group rounded-lg border border-border/40 bg-card/80 p-3 backdrop-blur-sm ${
+      className={`kanban-card-transition cursor-pointer group rounded-lg border border-border/40 bg-card/80 p-3 backdrop-blur-sm hover:border-indigo-500/50 ${
         isDragging ? "opacity-50 shadow-2xl ring-2 ring-primary/50" : ""
       }`}
     >

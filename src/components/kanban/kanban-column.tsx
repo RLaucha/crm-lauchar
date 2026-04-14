@@ -13,6 +13,7 @@ interface KanbanColumnProps {
   prospects: Prospect[];
   isCollapsed?: boolean;
   onUpdateNotas: (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => void;
+  onCardClick: (prospect: Prospect) => void;
 }
 
 export function KanbanColumn({
@@ -20,6 +21,7 @@ export function KanbanColumn({
   prospects,
   isCollapsed = false,
   onUpdateNotas,
+  onCardClick,
 }: KanbanColumnProps) {
   const config = ESTADO_CONFIG[estado];
   const { setNodeRef, isOver } = useDroppable({ id: estado });
@@ -61,7 +63,7 @@ export function KanbanColumn({
           strategy={verticalListSortingStrategy}
         >
           {prospects.map((prospect) => (
-            <KanbanCard key={prospect.id} prospect={prospect} onUpdateNotas={onUpdateNotas} />
+            <KanbanCard key={prospect.id} prospect={prospect} onUpdateNotas={onUpdateNotas} onCardClick={onCardClick} />
           ))}
         </SortableContext>
 

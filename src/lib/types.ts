@@ -9,17 +9,26 @@ export const ESTADOS = [
   "En Conversación",
   "Presupuesto",
   "Ganado",
+  "En Desarrollo",
   "Archivado",
 ] as const;
 
 export type EstadoProspecto = (typeof ESTADOS)[number];
+
+export interface Tarea {
+  id: string;
+  text: string;
+  completed: boolean;
+}
 
 export interface Prospect {
   id: string;
   created_at: string;
   updated_at: string;
   nombre: string;
+  nombre_dueno: string | null;
   contacto: string | null;
+  email: string | null;
   telefono: string | null;
   metodo_contacto: 'WhatsApp' | 'Email';
   url: string | null;
@@ -27,6 +36,7 @@ export interface Prospect {
   notas_ia: string | null;
   draft_asunto: string | null;
   draft_mensaje: string | null;
+  tareas: Tarea[];
   prioridad: number; // 1-5
 }
 
@@ -70,6 +80,12 @@ export const ESTADO_CONFIG: Record<
     bgClass: "bg-emerald-500/20",
     textClass: "text-emerald-400",
     emoji: "🏆",
+  },
+  "En Desarrollo": {
+    color: "#3b82f6",
+    bgClass: "bg-blue-500/20",
+    textClass: "text-blue-400",
+    emoji: "💻",
   },
   Archivado: {
     color: "#64748b",

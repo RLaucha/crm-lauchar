@@ -55,14 +55,14 @@ export function useProspects() {
     []
   );
 
-  // Update prospect state (for drag & drop)
-  const updateProspectEstado = useCallback(
-    async (prospectId: string, newEstado: EstadoProspecto) => {
+  // Update general prospect state
+  const updateProspect = useCallback(
+    async (prospectId: string, updates: Partial<Prospect>) => {
       // Optimistic update
       setProspects((prev) =>
         prev.map((p) =>
           p.id === prospectId
-            ? { ...p, estado: newEstado, updated_at: new Date().toISOString() }
+            ? { ...p, ...updates, updated_at: new Date().toISOString() }
             : p
         )
       );
@@ -70,36 +70,26 @@ export function useProspects() {
       // Backend update
       await supabase
         .from('leads')
-        .update({ estado: newEstado, updated_at: new Date().toISOString() })
+        .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('id', prospectId);
     },
     []
   );
 
+  // Update prospect state (for drag & drop)
+  const updateProspectEstado = useCallback(
+    async (prospectId: string, newEstado: EstadoProspecto) => {
+      updateProspect(prospectId, { estado: newEstado });
+    },
+    [updateProspect]
+  );
+
   // Update prospect AI notes
   const updateProspectNotas = useCallback(
     async (prospectId: string, nuevasNotas: string, draftAsunto: string | null, draftMensaje: string | null) => {
-      // Optimistic update
-      setProspects((prev) =>
-        prev.map((p) =>
-          p.id === prospectId
-            ? { ...p, notas_ia: nuevasNotas, draft_asunto: draftAsunto, draft_mensaje: draftMensaje, updated_at: new Date().toISOString() }
-            : p
-        )
-      );
-
-      // Backend update
-      await supabase
-        .from('leads')
-        .update({ 
-          notas_ia: nuevasNotas, 
-          draft_asunto: draftAsunto,
-          draft_mensaje: draftMensaje,
-          updated_at: new Date().toISOString() 
-        })
-        .eq('id', prospectId);
+      updateProspect(prospectId, { notas_ia: nuevasNotas, draft_asunto: draftAsunto, draft_mensaje: draftMensaje });
     },
-    []
+    [updateProspect]
   );
 
   // Filter prospects by search query
@@ -126,6 +116,7 @@ export function useProspects() {
     prospects: filteredProspects,
     prospectsByEstado,
     addProspect,
+    updateProspect,
     updateProspectEstado,
     updateProspectNotas,
     searchQuery,
