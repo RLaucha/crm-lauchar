@@ -95,6 +95,21 @@ export const ESTADO_CONFIG: Record<
   },
 };
 
+// Tipo para resultados del Buscador de Leads (pre-importación)
+export interface SearchLead {
+  title: string;
+  address: string;
+  phone: string | null;
+  website: string | null;
+  rating: number | null;
+  ratingCount: number | null;
+  category: string | null;
+  prioridad: number; // 1-5, calculada por filtro inteligente
+  razon_ia: string; // explicación de Gemini de por qué es buen prospecto
+  plataforma_detectada: string | null; // "wix", "linktree", "wordpress", etc.
+  selected: boolean; // para checkbox de importación en UI
+}
+
 // Colores para prioridad (1-5)
 export const PRIORIDAD_CONFIG: Record<
   number,

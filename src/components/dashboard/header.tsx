@@ -1,16 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Zap } from "lucide-react";
+import { Plus, Search, Zap, Radar } from "lucide-react";
 
 interface HeaderProps {
   onAddProspect: () => void;
+  onOpenLeadFinder: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
 
 export function Header({
   onAddProspect,
+  onOpenLeadFinder,
   searchQuery,
   onSearchChange,
 }: HeaderProps) {
@@ -48,6 +50,16 @@ export function Header({
               className="h-9 w-64 rounded-lg border border-border/60 bg-muted/50 pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
             />
           </div>
+
+          {/* Lead Finder button */}
+          <Button
+            onClick={onOpenLeadFinder}
+            variant="outline"
+            className="border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/60 hover:text-cyan-300 transition-all duration-300"
+          >
+            <Radar className="mr-2 h-4 w-4" />
+            Buscar Leads
+          </Button>
 
           {/* Add button */}
           <Button

@@ -6,11 +6,13 @@ import { StatsBar } from "@/components/dashboard/stats-bar";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { AddProspectDialog } from "@/components/dashboard/add-prospect-dialog";
 import { ProspectDetailDialog } from "@/components/kanban/prospect-detail-dialog";
+import { LeadFinderDialog } from "@/components/dashboard/lead-finder-dialog";
 import { useProspects } from "@/hooks/use-prospects";
 import { Prospect } from "@/lib/types";
 
 export default function DashboardPage() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isLeadFinderOpen, setIsLeadFinderOpen] = useState(false);
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
 
   const {
@@ -28,6 +30,7 @@ export default function DashboardPage() {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <Header
         onAddProspect={() => setIsAddDialogOpen(true)}
+        onOpenLeadFinder={() => setIsLeadFinderOpen(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
@@ -47,6 +50,14 @@ export default function DashboardPage() {
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
         onAdd={addProspect}
+      />
+
+      <LeadFinderDialog
+        open={isLeadFinderOpen}
+        onOpenChange={setIsLeadFinderOpen}
+        onImportLeads={(leads) => {
+          leads.forEach((lead) => addProspect(lead));
+        }}
       />
 
       <ProspectDetailDialog
